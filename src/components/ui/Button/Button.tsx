@@ -5,6 +5,7 @@ import {
 } from "@/lib/shadcn/ui/button";
 
 type ButtonProps = ButtonUIProps & {
+  id: string;
   loading?: boolean;
 }
 

@@ -55,12 +55,12 @@ export default function LoginForm({
           />
 
           <div className="flex justify-between">
-            <Button type="submit" loading={methods.formState.isSubmitting}>
+            <Button type="submit" loading={methods.formState.isSubmitting} id="submit">
               Entrar
             </Button>
 
             <Link href={routes.auth.forgotPassword}>
-              <Button variant="link">
+              <Button variant="link" id="forgotPassword">
                 Esqueceu a senha?
               </Button>
             </Link>
