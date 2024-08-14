@@ -3,20 +3,23 @@ import {
   FormControl, FormDescription, FormField, FormItem, FormLabel,
   FormMessage,
 } from "@/lib/shadcn/ui/form";
-import { Input as InputUI } from "@/lib/shadcn/ui/input";
+import {
+  InputProps as InputUIProps,
+  Input as InputUI,
+} from "@/lib/shadcn/ui/input";
 
-type InputProps = {
+type InputProps = InputUIProps & {
+  id: string;
   name: string;
   label: string;
-  placeholder?: string;
   description?: string;
 }
 
 export default function Input({
   name,
   label,
-  placeholder,
   description,
+  ...rest
 }: InputProps) {
   const {
     control,
@@ -34,8 +37,8 @@ export default function Input({
 
           <FormControl>
             <InputUI
-              placeholder={placeholder}
               {...field}
+              {...rest}
             />
           </FormControl>
 
