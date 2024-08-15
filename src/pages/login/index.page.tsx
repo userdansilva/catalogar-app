@@ -3,18 +3,15 @@ import Head from "next/head";
 import { Heading, Paragraph } from "@/components/ui/Typography";
 import { LoginForm, FormValues } from "./components/LoginForm";
 import { routes } from "@/utils/routes";
+import { api } from "@/utils/api";
 
 export default function LoginPage() {
   const onSubmit = async (values: FormValues) => {
     try {
-      await new Promise<void>((resolve) => {
-        setTimeout(() => {
-          console.log("values", values);
-          resolve();
-        }, 1500);
-      });
-    } catch {
-      //
+      const me = await api.post("/login", values);
+      console.log(me);
+    } catch (e) {
+      console.error(e);
     }
   };
 

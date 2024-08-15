@@ -29,18 +29,39 @@ async function getConnection() {
 async function connectionExecute(
   connection: mysql.PoolConnection,
   query: string,
+  statements: (string | number)[] = [],
 ) {
   try {
-    const [results] = await connection.execute(query);
+    const [results] = await connection.execute(query, statements);
     return results;
   } catch {
     throw new Error("Falha ao executar ação no banco de dados");
   }
 }
 
-export async function executeQuery(query: string) {
+/**
+ * Use this function to execute queries in db
+ *
+ * Example
+ *
+ * ```ts
+ * type User = {
+ *  name: string;
+ *  email: string;
+ * }
+ *
+ * const results = await executeQuery<User[]>(
+ *  "SELECT `name`, `email` FROM `users` WHERE `name` = ? AND `age` > ?",
+ * ["Daniel", 26]
+ * )
+ * ```
+ */
+export async function executeQuery<T>(
+  query: string,
+  statements?: (string | number)[],
+) {
   const connection = await getConnection();
-  const results = await connectionExecute(connection, query);
+  const results = await connectionExecute(connection, query, statements);
   connection.release();
-  return results;
+  return results as T;
 }
