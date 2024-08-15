@@ -8,12 +8,15 @@ import { routes } from "@/utils/routes";
 import { Button } from "@/components/ui/Button";
 
 const schema = z.object({
-  email: z.string().email({
-    message: "E-mail inválido",
-  }),
-  password: z.string().min(1, {
-    message: "Campo obrigatório",
-  }),
+  email: z.string().optional(),
+  password: z.string().optional(),
+
+  // email: z.string().email({
+  //   message: "E-mail inválido",
+  // }),
+  // password: z.string().min(1, {
+  //   message: "Campo obrigatório",
+  // }),
 });
 
 export type FormValues = z.infer<typeof schema>;
