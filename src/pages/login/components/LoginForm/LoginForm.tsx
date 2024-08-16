@@ -8,15 +8,12 @@ import { routes } from "@/utils/routes";
 import { Button } from "@/components/ui/Button";
 
 const schema = z.object({
-  email: z.string().optional(),
-  password: z.string().optional(),
-
-  // email: z.string().email({
-  //   message: "E-mail inválido",
-  // }),
-  // password: z.string().min(1, {
-  //   message: "Campo obrigatório",
-  // }),
+  email: z.string().email({
+    message: "E-mail inválido",
+  }),
+  password: z.string().min(1, {
+    message: "Campo obrigatório",
+  }),
 });
 
 export type FormValues = z.infer<typeof schema>;
@@ -45,20 +42,24 @@ export default function LoginForm({
           className="space-y-6"
         >
           <Input
+            id="email"
             label="E-mail"
             name="email"
-            id="email"
           />
 
           <Input
+            id="password"
             label="Senha"
             name="password"
-            id="password"
             type="password"
           />
 
           <div className="flex justify-between">
-            <Button type="submit" loading={methods.formState.isSubmitting} id="submit">
+            <Button
+              type="submit"
+              loading={methods.formState.isSubmitting}
+              id="submit"
+            >
               Entrar
             </Button>
 

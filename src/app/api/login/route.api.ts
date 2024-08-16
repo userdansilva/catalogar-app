@@ -1,6 +1,8 @@
 import { z, ZodError } from "zod";
 import { NextResponse } from "next/server";
 import { signIn } from "@/utils/auth";
+import { ApiResponse } from "@/config/system";
+import { formatZodError } from "@/utils/formatZodError";
 
 const schema = z.object({
   email: z.string().email({
@@ -10,18 +12,6 @@ const schema = z.object({
     message: "Senha é obrigatório",
   }),
 });
-
-type FormattedError = {
-  code: string;
-  message: string;
-}
-
-function formatZodError(zodError: ZodError): FormattedError[] {
-  return zodError.errors.map((error) => ({
-    code: error.code.toUpperCase(),
-    message: error.message,
-  }));
-}
 
 export async function POST(request: Request) {
   const credentials = await request.json();
@@ -39,9 +29,7 @@ export async function POST(request: Request) {
     await signIn("credentials", formData);
   } catch (e) {
     if (e instanceof ZodError) {
-      // should I add field like: field: email
-
-      return NextResponse.json({
+      return NextResponse.json<ApiResponse<null>>({
         data: null,
         errors: formatZodError(e),
       }, {
@@ -49,14 +37,14 @@ export async function POST(request: Request) {
       });
     }
 
-    return NextResponse.json({
+    return NextResponse.json<ApiResponse<null>>({
       data: null,
       errors: [{
         code: "INVALID_CREDENTIALS",
         message: "Email e/ou senha inválidos",
       }],
     }, {
-      status: 400,
+      status: 401,
     });
   }
 }
