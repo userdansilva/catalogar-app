@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
-import { executeQuery } from "./executeQuery";
+import { executeQuery } from "./utils/executeQuery";
 
 type User = {
   name: string;
