@@ -1,7 +1,11 @@
+import { CodeError } from "@/auth";
+
 export const routes = {
   auth: {
     register: "/register",
-    login: "/login",
+    login: (code?: CodeError) => (!code
+      ? "/login"
+      : `/login?code=${code}`),
     forgotPassword: "/forgot-password",
   },
 };

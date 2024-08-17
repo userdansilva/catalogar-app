@@ -1,20 +1,10 @@
 import Link from "next/link";
 import Head from "next/head";
 import { Heading, Paragraph } from "@/components/ui/Typography";
-// import { LoginForm, FormValues } from "./_components/LoginForm";
 import { routes } from "@/utils/routes";
-// import { api } from "@/utils/api";
+import { LoginForm } from "./_components/LoginForm";
 
 export default function LoginPage() {
-  // const onSubmit = async (values: FormValues) => {
-  //   try {
-  //     const me = await api.post("/login", values);
-  //     console.log(me);
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // };
-
   return (
     <>
       <Head>
@@ -39,7 +29,7 @@ export default function LoginPage() {
             </Paragraph>
           </div>
 
-          {/* <LoginForm onSubmit={onSubmit} /> */}
+          <LoginForm />
         </div>
       </div>
     </>

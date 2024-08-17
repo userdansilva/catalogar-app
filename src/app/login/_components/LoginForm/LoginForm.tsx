@@ -1,76 +1,69 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import Link from "next/link";
-import { Input } from "@/components/ui/Input";
-import { Form } from "@/lib/shadcn/ui/form";
+import { redirect } from "next/navigation";
 import { routes } from "@/utils/routes";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/lib/shadcn/ui/input";
+import { Label } from "@/lib/shadcn/ui/label";
+import { CustomError, signIn } from "@/auth";
 
-const schema = z.object({
-  email: z.string().email({
-    message: "E-mail inválido",
-  }),
-  password: z.string().min(1, {
-    message: "Campo obrigatório",
-  }),
-});
-
-export type FormValues = z.infer<typeof schema>;
-
-type LoginFormProps = {
-  onSubmit: (values: FormValues) => Promise<void>;
-}
-
-export default function LoginForm({
-  onSubmit,
-}: LoginFormProps) {
-  const methods = useForm<FormValues>({
-    mode: "onChange",
-    defaultValues: {
-      email: "contato@catalogar.com.br",
-      password: "daniel.sousa",
-    },
-    resolver: zodResolver(schema),
-  });
-
+export default function LoginForm() {
   return (
     <div>
-      <Form {...methods}>
-        <form
-          onSubmit={methods.handleSubmit(onSubmit)}
-          className="space-y-6"
-        >
-          <Input
-            id="email"
-            label="E-mail"
-            name="email"
-          />
+      <form
+        className="space-y-6"
+        action={async (formData) => {
+          "use server";
 
-          <Input
-            id="password"
-            label="Senha"
-            name="password"
-            type="password"
-          />
+          try {
+            await signIn("credentials", formData);
+          } catch (e) {
+            redirect(`${routes.auth.login(
+              (e as CustomError).code,
+            )}`);
+          }
+        }}
+      >
+        <div>
+          <Label>
+            E-mail
+            <Input
+              id="email"
+              name="email"
+              placeholder="Digite seu e-mail"
+              type="email"
+              required
+            />
+          </Label>
+        </div>
 
-          <div className="flex justify-between">
-            <Button
-              type="submit"
-              loading={methods.formState.isSubmitting}
-              id="submit"
-            >
-              Entrar
+        <div>
+          <Label>
+            Senha
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Digite sua senha"
+              required
+            />
+          </Label>
+        </div>
+
+        <div className="flex justify-between">
+          <Button
+            type="submit"
+            id="submit"
+          >
+            Entrar
+          </Button>
+
+          <Link href={routes.auth.forgotPassword}>
+            <Button variant="link" id="forgotPassword">
+              Esqueceu a senha?
             </Button>
-
-            <Link href={routes.auth.forgotPassword}>
-              <Button variant="link" id="forgotPassword">
-                Esqueceu a senha?
-              </Button>
-            </Link>
-          </div>
-        </form>
-      </Form>
+          </Link>
+        </div>
+      </form>
     </div>
   );
 }
