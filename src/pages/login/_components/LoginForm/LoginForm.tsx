@@ -28,7 +28,7 @@ export default function LoginForm({
   const methods = useForm<FormValues>({
     mode: "onChange",
     defaultValues: {
-      email: "daniel.sousa@catalogar.com.br",
+      email: "contato@catalogar.com.br",
       password: "daniel.sousa",
     },
     resolver: zodResolver(schema),

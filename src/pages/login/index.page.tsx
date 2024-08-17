@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Head from "next/head";
 import { Heading, Paragraph } from "@/components/ui/Typography";
-import { LoginForm, FormValues } from "./components/LoginForm";
+import { LoginForm, FormValues } from "./_components/LoginForm";
 import { routes } from "@/utils/routes";
 import { api } from "@/utils/api";
 
