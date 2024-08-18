@@ -1,9 +1,8 @@
 import { auth, signOut } from "@/auth";
+import { routes } from "@/utils/routes";
 
 export default async function Dashboard() {
   const session = await auth();
-
-  console.log(session);
 
   return (
     <div className="flex h-screen flex-col items-center justify-center">
@@ -11,12 +10,18 @@ export default async function Dashboard() {
         You are authenticated!
       </h1>
 
+      <p>
+        {JSON.stringify(session)}
+      </p>
+
       <div>
         <form
           action={async () => {
             "use server";
 
-            await signOut();
+            await signOut({
+              redirectTo: routes.auth.login(),
+            });
           }}
         >
           <button type="submit">

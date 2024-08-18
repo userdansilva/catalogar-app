@@ -16,7 +16,6 @@ export default function LoginForm() {
 
           try {
             await signIn("credentials", formData);
-            redirect(routes.authenticated.home);
           } catch (e) {
             redirect(`${routes.auth.login(
               (e as CustomError).code,

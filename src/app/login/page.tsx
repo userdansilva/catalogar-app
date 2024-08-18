@@ -1,9 +1,10 @@
 import Link from "next/link";
 import Head from "next/head";
+import { redirect } from "next/navigation";
 import { Heading, Paragraph } from "@/components/ui/Typography";
 import { routes } from "@/utils/routes";
 import { LoginForm } from "./_components/LoginForm";
-import { CodeError } from "@/auth";
+import { auth, CodeError } from "@/auth";
 import { Alert } from "@/components/ui/Alert";
 
 type LoginPageProps = {
@@ -12,9 +13,15 @@ type LoginPageProps = {
   }
 }
 
-export default function LoginPage({
+export default async function LoginPage({
   searchParams,
 }: LoginPageProps) {
+  const session = await auth();
+
+  if (session?.user) {
+    redirect(routes.authenticated.home);
+  }
+
   return (
     <>
       <Head>
