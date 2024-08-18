@@ -66,4 +66,8 @@ export const {
   pages: {
     signIn: "/login",
   },
+  callbacks: {
+    // Logged in users are authenticated, otherwise redirect to login page
+    authorized: async ({ auth: authData }) => !!authData,
+  },
 });

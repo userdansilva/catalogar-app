@@ -8,4 +8,7 @@ export const routes = {
       : `/login?code=${code}`),
     forgotPassword: "/forgot-password",
   },
+  authenticated: {
+    home: "/app",
+  },
 };
