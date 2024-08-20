@@ -19,5 +19,7 @@ export const routes = {
     products: {
       home: "/app/products",
     },
+    profile: "/app/profile",
+    company: "/app/company",
   },
 };

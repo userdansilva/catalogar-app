@@ -2,8 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { routes } from "@/utils/routes";
 import logo from "../../../../../public/logo.svg";
-import { Avatar, AvatarFallback } from "@/lib/shadcn/ui/avatar";
 import { auth } from "@/auth";
+import { TopbarMenu } from "./TopbarMenu";
 
 const links = [
   {
@@ -24,15 +24,6 @@ const links = [
   },
 ];
 
-function getInitials(fullName: string) {
-  const splittedName = fullName.split(" ");
-
-  const firstName = splittedName[0];
-  const lastName = splittedName[splittedName.length - 1];
-
-  return firstName.charAt(0) + lastName.charAt(0);
-}
-
 export default async function Topbar() {
   const session = await auth();
 
@@ -40,7 +31,9 @@ export default async function Topbar() {
     throw new Error("Unable to get user full name");
   }
 
-  const initials = getInitials(session.user.name);
+  if (!session?.user?.email) {
+    throw new Error("Unable to get user email");
+  }
 
   return (
     <header>
@@ -64,11 +57,12 @@ export default async function Topbar() {
         </div>
 
         <div className="ml-auto">
-          <Avatar>
-            <AvatarFallback>
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+          <TopbarMenu
+            user={{
+              name: session.user.name,
+              email: session.user.email,
+            }}
+          />
         </div>
       </nav>
     </header>
