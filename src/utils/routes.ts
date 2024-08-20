@@ -10,5 +10,14 @@ export const routes = {
   },
   authenticated: {
     home: "/app",
+    designs: {
+      home: "/app/designs",
+    },
+    categories: {
+      home: "/app/categories",
+    },
+    products: {
+      home: "/app/products",
+    },
   },
 };

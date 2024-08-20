@@ -5,7 +5,7 @@ export default async function Dashboard() {
   const session = await auth();
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center">
+    <div className="flex h-[calc(100vh-64px)] flex-col items-center justify-center">
       <h1>
         You are authenticated!
       </h1>
