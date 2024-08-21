@@ -1,5 +1,4 @@
-import { auth, signOut } from "@/auth";
-import { routes } from "@/utils/routes";
+import { auth } from "@/auth";
 
 export default async function Dashboard() {
   const session = await auth();
@@ -13,22 +12,6 @@ export default async function Dashboard() {
       <p>
         {JSON.stringify(session)}
       </p>
-
-      <div>
-        <form
-          action={async () => {
-            "use server";
-
-            await signOut({
-              redirectTo: routes.auth.login(),
-            });
-          }}
-        >
-          <button type="submit">
-            Sign Out
-          </button>
-        </form>
-      </div>
     </div>
   );
 }
