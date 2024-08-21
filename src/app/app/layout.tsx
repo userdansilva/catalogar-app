@@ -5,10 +5,10 @@ export default function Layout({
   children,
 }: PropsWithChildren) {
   return (
-    <div>
+    <div className="space-y-10 text-sm">
       <Topbar />
 
-      <main>
+      <main className="mx-auto min-h-[calc(100vh-6.5rem)] max-w-6xl px-10">
         {children}
       </main>
     </div>

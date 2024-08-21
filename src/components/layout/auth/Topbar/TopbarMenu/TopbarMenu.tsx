@@ -52,7 +52,9 @@ export default function TopbarMenu({
 
           <DropdownMenuGroup>
             <DropdownMenuItem disabled>
-              {user.email}
+              <span className="truncate">
+                {user.email}
+              </span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
 
