@@ -36,8 +36,8 @@ export default async function Topbar() {
   }
 
   return (
-    <header>
-      <nav className="flex h-16 items-center border-b px-4">
+    <header className="h-full border-b bg-background">
+      <nav className="mx-auto flex size-full max-w-6xl items-center px-4">
         <div className="mr-4">
           <Link href={routes.authenticated.home}>
             <Image

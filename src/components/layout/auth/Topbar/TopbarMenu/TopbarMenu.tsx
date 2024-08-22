@@ -45,7 +45,7 @@ export default function TopbarMenu({
           </Avatar>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="mr-2 w-64">
+        <DropdownMenuContent className="w-64">
           <DropdownMenuLabel className="-mb-2">
             {user.name}
           </DropdownMenuLabel>
