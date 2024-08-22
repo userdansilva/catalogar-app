@@ -1,4 +1,4 @@
-import { useFormContext } from "react-hook-form";
+import { Control } from "react-hook-form";
 import {
   FormControl, FormDescription, FormField, FormItem, FormLabel,
   FormMessage,
@@ -13,18 +13,17 @@ type InputProps = InputUIProps & {
   name: string;
   label: string;
   description?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  control: Control<any, any>;
 }
 
 export default function Input({
   name,
   label,
   description,
+  control,
   ...rest
 }: InputProps) {
-  const {
-    control,
-  } = useFormContext();
-
   return (
     <FormField
       control={control}
