@@ -1,6 +1,6 @@
 import mysql from "mysql2/promise";
 
-async function getConnection() {
+export async function getConnection() {
   const {
     DB_HOSTNAME,
     DB_PORT,
@@ -40,7 +40,7 @@ async function connectionExecute(
 }
 
 /**
- * Use this function to execute queries in db
+ * Use this function to execute a single query in db
  *
  * Example
  *

@@ -1,13 +1,13 @@
-import { PropsWithChildren } from "react";
-import { Button } from "@/components/ui/Button";
+import { PropsWithChildren, ReactNode } from "react";
 
 type PageLayoutProps = PropsWithChildren<{
   title: string;
   description?: string;
+  actionButton?: ReactNode;
 }>
 
 export default function PageLayout({
-  title, description, children,
+  title, description, children, actionButton,
 }: PageLayoutProps) {
   return (
     <div className="space-y-10">
@@ -19,9 +19,7 @@ export default function PageLayout({
             </h1>
           </div>
 
-          <Button id="add-category">
-            Adicionar
-          </Button>
+          {actionButton}
         </div>
 
         {description && (
