@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { executeQuery } from "@/utils/executeQuery";
 
 type CategoryDB = {
@@ -25,9 +26,13 @@ export type Category = {
 async function getAll(): Promise<{
   categories: Category[],
 }> {
+  const session = await auth();
+  if (!session) throw new Error("Unable to get user session");
+  const userId = +session.user.id;
+
   const query = "SELECT id, name, favorite, color_bg, color_text, archived, created_at, updated_at FROM categories WHERE user_id = ? ORDER BY id DESC";
 
-  const results = await executeQuery<CategoryDB[]>(query, [1]);
+  const results = await executeQuery<CategoryDB[]>(query, [userId]);
 
   const formattedResults = results.map<Category>((category) => ({
     id: category.id,

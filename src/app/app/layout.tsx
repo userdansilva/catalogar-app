@@ -6,7 +6,7 @@ export default function Layout({
 }: PropsWithChildren) {
   return (
     <div className="text-sm">
-      <div className="fixed inset-x-0 top-0 h-16">
+      <div className="fixed inset-x-0 top-0 z-10 h-16">
         <Topbar />
       </div>
 
