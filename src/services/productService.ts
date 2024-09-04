@@ -1,13 +1,18 @@
 import { RowDataPacket } from "mysql2";
+import { z } from "zod";
 import { executeQuery, getConnection } from "@/utils/executeQuery";
 import { auth } from "@/auth";
+import {
+  type createProductSchema,
+  type editProductSchema,
+} from "@/actions/schema";
 
-type ProductDB = {
+type ProductDTO = {
   id: number;
   name: string;
   archived: "Y" | "N";
   created_at: Date;
-  updated_at: Date | null;
+  updated_at: Date;
 } & RowDataPacket;
 
 export type Product = {
@@ -15,16 +20,16 @@ export type Product = {
   name: string;
   isArchived: boolean;
   createdAt: Date;
-  updatedAt: Date | null;
+  updatedAt: Date;
 }
 
-function formatProduct(product: ProductDB): Product {
+function formatProduct(product: ProductDTO): Product {
   return {
     id: product.id,
     name: product.name,
     isArchived: product.archived === "Y",
     createdAt: product.created_at,
-    updatedAt: product.created_at || undefined,
+    updatedAt: product.updated_at,
   };
 }
 
@@ -37,7 +42,7 @@ async function getAll(): Promise<{
 
   const query = "SELECT `id`, `name`, `archived`, `created_at`, `updated_at` FROM `products` WHERE `user_id` = ? ORDER BY `id` DESC";
 
-  const results = await executeQuery<ProductDB[]>(query, [userId]);
+  const results = await executeQuery<ProductDTO[]>(query, [userId]);
 
   const formattedResults = results.map<Product>(formatProduct);
 
@@ -46,11 +51,7 @@ async function getAll(): Promise<{
   };
 }
 
-type NewProduct = {
-  name: Product["name"];
-}
-
-async function create(newProduct: NewProduct): Promise<{
+async function create(newProduct: z.infer<typeof createProductSchema>): Promise<{
   product: Product,
 }> {
   const session = await auth();
@@ -66,7 +67,7 @@ async function create(newProduct: NewProduct): Promise<{
     await connection.beginTransaction();
 
     await connection.query(insertQuery, [newProduct.name, userId]);
-    const [results] = await connection.query<ProductDB[]>(getQuery, [userId]);
+    const [results] = await connection.query<ProductDTO[]>(getQuery, [userId]);
 
     await connection.commit();
 
@@ -103,8 +104,47 @@ async function remove(productId: number): Promise<void> {
   }
 }
 
+async function update(updateProduct: z.infer<typeof editProductSchema>) {
+  const session = await auth();
+  if (!session) throw new Error("Unable to get user session");
+  const userId = +session.user.id;
+
+  const updateQuery = "UPDATE `products` SET `name` = ?, `archived` = ?, `updated_at` = NOW() WHERE `id` = ? AND `user_id` = ?";
+  const getQuery = "SELECT `id`, `name`, `archived`, `created_at`, `updated_at` FROM `products` WHERE `id` = ? AND `user_id` = ?";
+
+  const connection = await getConnection();
+
+  try {
+    await connection.beginTransaction();
+    await connection.query(updateQuery, [
+      updateProduct.name,
+      updateProduct.isArchived ? "Y" : "N",
+      updateProduct.id,
+      userId,
+    ]);
+
+    const [results] = await connection.query<ProductDTO[]>(getQuery, [
+      updateProduct.id,
+      userId,
+    ]);
+
+    await connection.commit();
+
+    const product = formatProduct(results[0]);
+
+    return { product };
+  } catch {
+    await connection.rollback();
+  } finally {
+    connection.release();
+  }
+
+  throw new Error("Algo deu errado ao editar produto");
+}
+
 export const productService = {
   getAll,
   create,
+  update,
   delete: remove,
 };

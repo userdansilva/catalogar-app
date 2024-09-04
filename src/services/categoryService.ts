@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { executeQuery } from "@/utils/executeQuery";
 
-type CategoryDB = {
+type CategoryDTO = {
   id: number;
   name: string;
   favorite: "Y" | "N";
@@ -32,7 +32,7 @@ async function getAll(): Promise<{
 
   const query = "SELECT id, name, favorite, color_bg, color_text, archived, created_at, updated_at FROM categories WHERE user_id = ? ORDER BY id DESC";
 
-  const results = await executeQuery<CategoryDB[]>(query, [userId]);
+  const results = await executeQuery<CategoryDTO[]>(query, [userId]);
 
   const formattedResults = results.map<Category>((category) => ({
     id: category.id,

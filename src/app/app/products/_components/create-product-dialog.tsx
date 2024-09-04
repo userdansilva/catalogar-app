@@ -70,6 +70,7 @@ export function CreateProductDialog() {
               label="Nome"
               name="name"
               placeholder="Ex.: Caneca, Boné, Camisa..."
+              autoComplete="off"
               control={methods.control}
             />
           </form>
