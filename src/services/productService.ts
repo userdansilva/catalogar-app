@@ -4,7 +4,7 @@ import { executeQuery, getConnection } from "@/utils/executeQuery";
 import { auth } from "@/auth";
 import {
   type createProductSchema,
-  type editProductSchema,
+  type updateProductSchema,
 } from "@/actions/schema";
 
 type ProductDTO = {
@@ -33,16 +33,31 @@ function formatProduct(product: ProductDTO): Product {
   };
 }
 
-async function getAll(): Promise<{
+type ProductsFilters = {
+  exactName?: string;
+}
+
+async function getAll({
+  exactName,
+}: ProductsFilters = {}): Promise<{
   products: Product[],
 }> {
   const session = await auth();
   if (!session) throw new Error("Unable to get user session");
   const userId = +session.user.id;
 
-  const query = "SELECT `id`, `name`, `archived`, `created_at`, `updated_at` FROM `products` WHERE `user_id` = ? ORDER BY `id` DESC";
+  const queryParams: (string | number)[] = [userId];
 
-  const results = await executeQuery<ProductDTO[]>(query, [userId]);
+  let query = "SELECT `id`, `name`, `archived`, `created_at`, `updated_at` FROM `products` WHERE `user_id` = ?";
+
+  if (exactName) {
+    query += " AND `name` = ?";
+    queryParams.push(exactName);
+  }
+
+  query += " ORDER BY `id` DESC";
+
+  const results = await executeQuery<ProductDTO[]>(query, queryParams);
 
   const formattedResults = results.map<Product>(formatProduct);
 
@@ -104,7 +119,7 @@ async function remove(productId: number): Promise<void> {
   }
 }
 
-async function update(updateProduct: z.infer<typeof editProductSchema>) {
+async function update(updateProduct: z.infer<typeof updateProductSchema>) {
   const session = await auth();
   if (!session) throw new Error("Unable to get user session");
   const userId = +session.user.id;
@@ -142,9 +157,28 @@ async function update(updateProduct: z.infer<typeof editProductSchema>) {
   throw new Error("Algo deu errado ao editar produto");
 }
 
+async function isNameAvaliable(name: string, id?: number) {
+  const session = await auth();
+  if (!session) throw new Error("Unable to get user session");
+  const userId = +session.user.id;
+
+  let query = "SELECT COUNT(*) AS `count` FROM `products` WHERE LOWER(`name`) = LOWER(?) AND `user_id` = ?";
+  const queryParams = [name, userId];
+
+  if (id) {
+    query += " AND `id` != ?";
+    queryParams.push(id);
+  }
+
+  const [result] = await executeQuery<{ count: number }[]>(query, queryParams);
+
+  return result.count === 0;
+}
+
 export const productService = {
   getAll,
   create,
   update,
   delete: remove,
+  isNameAvaliable,
 };

@@ -5,7 +5,7 @@ import {
 } from "@/lib/shadcn/ui/table";
 import { productService } from "@/services/productService";
 import { DeleteProductAlertDialog } from "./delete-product-alert-dialog";
-import { EditProductDialog } from "./edit-product-dialog";
+import { UpdateProductDialog } from "./update-product-dialog";
 import { Badge } from "@/lib/shadcn/ui/badge";
 
 export async function ProductsTable() {
@@ -47,7 +47,7 @@ export async function ProductsTable() {
             <TableCell>{format(product.updatedAt, "dd MMM, yyyy HH:mm", { locale: ptBR })}</TableCell>
             <TableCell className="flex justify-center space-x-1 p-2">
               <div className="flex">
-                <EditProductDialog product={product} />
+                <UpdateProductDialog product={product} />
                 <DeleteProductAlertDialog product={product} />
               </div>
             </TableCell>

@@ -10,7 +10,7 @@ export const createProductSchema = z.object({
   name: product.name,
 });
 
-export const editProductSchema = z.object({
+export const updateProductSchema = z.object({
   id: product.id,
   name: product.name,
   isArchived: product.isArchived,

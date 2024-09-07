@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Product } from "@/services/productService";
 import { deleteProductAction } from "@/actions/delete-product-action";
+import { useToast } from "@/lib/hooks/use-toast";
 
 type DeleteProductAlertDialogProps = {
   product: Product;
@@ -24,9 +25,20 @@ type DeleteProductAlertDialogProps = {
 export function DeleteProductAlertDialog({
   product,
 }: DeleteProductAlertDialogProps) {
+  const { toast } = useToast();
+
   const { execute } = useAction(deleteProductAction, {
     onSuccess: () => {
-      //
+      toast({
+        title: "Produto removido com sucesso!",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Poxa! Algo deu errado.",
+        description: "Falha ocorreu ao remover o produto, por favor tente novamente.",
+        variant: "destructive",
+      });
     },
   });
 

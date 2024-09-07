@@ -14,10 +14,12 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
   DialogTrigger,
 } from "@/lib/shadcn/ui/dialog";
+import { useToast } from "@/lib/hooks/use-toast";
 
 type FormValues = z.infer<typeof createProductSchema>;
 
 export function CreateProductDialog() {
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
 
   const methods = useForm<FormValues>({
@@ -28,12 +30,38 @@ export function CreateProductDialog() {
     resolver: zodResolver(createProductSchema),
   });
 
+  const handleOpenChange = (_open: boolean) => {
+    methods.reset();
+    setOpen(_open);
+  };
+
   const { execute, isPending } = useAction(createProductAction, {
     onSuccess: () => {
       setOpen(false);
       methods.reset();
 
-      // Toast
+      toast({
+        title: "Produto criado com sucesso!",
+      });
+    },
+    onError: ({ error }) => {
+      const nameValidationErrors = error.validationErrors?.name?._errors;
+
+      if (nameValidationErrors) {
+        nameValidationErrors.forEach((message) => {
+          methods.setError("name", { message });
+        });
+
+        methods.setFocus("name");
+
+        return;
+      }
+
+      toast({
+        title: "Poxa! Algo deu errado.",
+        description: "Falha ocorreu ao criar o produto, por favor tente novamente.",
+        variant: "destructive",
+      });
     },
   });
 
@@ -42,7 +70,7 @@ export function CreateProductDialog() {
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button id="open-create-product-dialog">
           Adicionar

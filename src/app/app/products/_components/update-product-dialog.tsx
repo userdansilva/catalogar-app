@@ -17,21 +17,23 @@ import {
   FormMessage,
 } from "@/lib/shadcn/ui/form";
 import { Input } from "@/components/ui/Input";
-import { editProductSchema } from "@/actions/schema";
+import { updateProductSchema } from "@/actions/schema";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/lib/shadcn/ui/select";
 import { updateProductAction } from "@/actions/update-product-action";
+import { useToast } from "@/lib/hooks/use-toast";
 
-type FormValues = z.infer<typeof editProductSchema>;
+type FormValues = z.infer<typeof updateProductSchema>;
 
 type EditProductDialogProps = {
   product: Product;
 }
 
-export function EditProductDialog({
+export function UpdateProductDialog({
   product,
 }: EditProductDialogProps) {
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
 
   const methods = useForm<FormValues>({
@@ -46,7 +48,7 @@ export function EditProductDialog({
       name: product.name,
       isArchived: product.isArchived,
     },
-    resolver: zodResolver(editProductSchema),
+    resolver: zodResolver(updateProductSchema),
   });
 
   const { execute, isPending } = useAction(updateProductAction, {
@@ -54,7 +56,28 @@ export function EditProductDialog({
       setOpen(false);
       methods.reset();
 
-      // Toast
+      toast({
+        title: "Produto atualizado com sucesso!",
+      });
+    },
+    onError: ({ error }) => {
+      const nameValidationErrors = error.validationErrors?.name?._errors;
+
+      if (nameValidationErrors) {
+        nameValidationErrors.forEach((message) => {
+          methods.setError("name", { message });
+        });
+
+        methods.setFocus("name");
+
+        return;
+      }
+
+      toast({
+        title: "Poxa! Algo deu errado.",
+        description: "Falha ocorreu ao editar o produto, por favor tente novamente.",
+        variant: "destructive",
+      });
     },
   });
 
