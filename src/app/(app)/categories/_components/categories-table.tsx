@@ -15,7 +15,6 @@ export async function CategoriesTable() {
         <col width={50} />
         <col />
         <col width={150} />
-        <col width={150} />
         <col width={200} />
         <col width={200} />
         <col width={100} />
@@ -26,7 +25,6 @@ export async function CategoriesTable() {
           <TableHead>Id</TableHead>
           <TableHead>Nome</TableHead>
           <TableHead className="text-center">Status</TableHead>
-          <TableHead>Favorito</TableHead>
           <TableHead>Criado em</TableHead>
           <TableHead>Atualizado em</TableHead>
           <TableHead className="text-center">Ações</TableHead>
@@ -43,7 +41,6 @@ export async function CategoriesTable() {
                 {category.isArchived ? "Arquivado" : "Ativo"}
               </Badge>
             </TableCell>
-            <TableCell>{category.isFavorite ? "Sim" : "Não"}</TableCell>
             <TableCell>{format(category.createdAt, "dd MMM, yyyy HH:mm", { locale: ptBR })}</TableCell>
             <TableCell>{category.updatedAt ? format(category.updatedAt, "dd MMM, yyyy HH:mm", { locale: ptBR }) : "---"}</TableCell>
             <TableCell className="flex justify-center space-x-1 p-2">

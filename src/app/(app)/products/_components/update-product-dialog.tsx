@@ -154,7 +154,7 @@ export function UpdateProductDialog({
                     desse produto.
                   </FormDescription>
 
-                  <FormMessage />
+                  <FormMessage className="text-xs font-normal" />
                 </FormItem>
               )}
             />
