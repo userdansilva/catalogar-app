@@ -9,17 +9,17 @@ export const routes = {
     forgotPassword: "/forgot-password",
   },
   authenticated: {
-    home: "/app",
+    home: "/",
     designs: {
-      home: "/app/designs",
+      home: "/designs",
     },
     categories: {
-      home: "/app/categories",
+      home: "/categories",
     },
     products: {
-      home: "/app/products",
+      home: "/products",
     },
-    profile: "/app/profile",
-    company: "/app/company",
+    profile: "/profile",
+    company: "/company",
   },
 };
