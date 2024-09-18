@@ -33,13 +33,7 @@ function formatProduct(product: ProductDTO): Product {
   };
 }
 
-type ProductsFilters = {
-  exactName?: string;
-}
-
-async function getAll({
-  exactName,
-}: ProductsFilters = {}): Promise<{
+async function getAll(): Promise<{
   products: Product[],
 }> {
   const session = await auth();
@@ -48,14 +42,7 @@ async function getAll({
 
   const queryParams: (string | number)[] = [userId];
 
-  let query = "SELECT `id`, `name`, `archived`, `created_at`, `updated_at` FROM `products` WHERE `user_id` = ?";
-
-  if (exactName) {
-    query += " AND `name` = ?";
-    queryParams.push(exactName);
-  }
-
-  query += " ORDER BY `id` DESC";
+  const query = "SELECT `id`, `name`, `archived`, `created_at`, `updated_at` FROM `products` WHERE `user_id` = ? ORDER BY `id` DESC";
 
   const results = await executeQuery<ProductDTO[]>(query, queryParams);
 

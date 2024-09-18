@@ -1,3 +1,4 @@
+import { RowDataPacket } from "mysql2";
 import { auth } from "@/auth";
 import { executeQuery } from "@/utils/executeQuery";
 
@@ -9,8 +10,8 @@ type CategoryDTO = {
   color_text: string // HEX
   archived: "Y" | "N";
   created_at: Date;
-  updated_at: Date | null;
-}
+  updated_at: Date;
+} & RowDataPacket;
 
 export type Category = {
   id: number;
@@ -20,7 +21,20 @@ export type Category = {
   backgroundColor: string;
   textColor: string
   createdAt: Date;
-  updatedAt: Date | null;
+  updatedAt: Date;
+}
+
+function formatCategory(category: CategoryDTO): Category {
+  return {
+    id: category.id,
+    name: category.name,
+    isFavorite: category.favorite === "Y",
+    isArchived: category.archived === "Y",
+    backgroundColor: category.color_bg,
+    textColor: category.color_text,
+    createdAt: category.created_at,
+    updatedAt: category.updated_at,
+  };
 }
 
 async function getAll(): Promise<{
@@ -34,16 +48,7 @@ async function getAll(): Promise<{
 
   const results = await executeQuery<CategoryDTO[]>(query, [userId]);
 
-  const formattedResults = results.map<Category>((category) => ({
-    id: category.id,
-    name: category.name,
-    isFavorite: category.favorite === "Y",
-    isArchived: category.archived === "Y",
-    backgroundColor: category.color_bg,
-    textColor: category.color_text,
-    createdAt: category.created_at,
-    updatedAt: category.created_at || undefined,
-  }));
+  const formattedResults = results.map<Category>(formatCategory);
 
   return {
     categories: formattedResults,

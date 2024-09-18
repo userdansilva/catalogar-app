@@ -1,5 +1,5 @@
 import { PageLayout } from "@/components/layout/auth/PageLayout";
-import { CategoriesTable } from "./_components/CategoriesTable";
+import { CategoriesTable } from "./_components/categories-table";
 
 export default async function CategoriesPage() {
   return (
