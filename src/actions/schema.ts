@@ -35,3 +35,11 @@ export const createCategorySchema = z.object({
   textColor: category.textColor,
   backgroundColor: category.backgroundColor,
 });
+
+export const updateCategorySchema = z.object({
+  id: category.id,
+  name: category.name,
+  textColor: category.textColor,
+  backgroundColor: category.backgroundColor,
+  isArchived: category.isArchived,
+});

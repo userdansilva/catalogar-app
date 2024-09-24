@@ -1,63 +1,68 @@
 "use client";
 
-import { Pencil } from "lucide-react";
+import { z } from "zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useAction } from "next-safe-action/hooks";
+import { Pencil } from "lucide-react";
 import { Button as ButtonUI } from "@/lib/shadcn/ui/button";
+import { updateCategorySchema } from "@/actions/schema";
+import { Category } from "@/services/categoryService";
+import { useToast } from "@/lib/hooks/use-toast";
+import { updateCategoryAction } from "@/actions/update-category-action";
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/lib/shadcn/ui/dialog";
-import { Button } from "@/components/ui/Button";
-import { Product } from "@/services/productService";
 import {
-  Form, FormControl, FormDescription, FormField, FormItem, FormLabel,
-  FormMessage,
+  Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage,
 } from "@/lib/shadcn/ui/form";
+import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { updateProductSchema } from "@/actions/schema";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/lib/shadcn/ui/select";
-import { updateProductAction } from "@/actions/update-product-action";
-import { useToast } from "@/lib/hooks/use-toast";
+import { CategoryPreview } from "./category-preview";
 
-type FormValues = z.infer<typeof updateProductSchema>;
+type FormValues = z.infer<typeof updateCategorySchema>;
 
-type UpdateProductDialogProps = {
-  product: Product;
+type UpdateCategoryDialogProps = {
+  category: Category
 }
 
-export function UpdateProductDialog({
-  product,
-}: UpdateProductDialogProps) {
+export function UpdateCategoryDialog({
+  category,
+}: UpdateCategoryDialogProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
 
   const methods = useForm<FormValues>({
     mode: "onChange",
     defaultValues: {
-      id: product.id,
-      name: product.name,
-      isArchived: product.isArchived,
+      id: category.id,
+      name: category.name,
+      isArchived: category.isArchived,
+      textColor: category.textColor,
+      backgroundColor: category.backgroundColor,
     },
     values: {
-      id: product.id,
-      name: product.name,
-      isArchived: product.isArchived,
+      id: category.id,
+      name: category.name,
+      isArchived: category.isArchived,
+      textColor: category.textColor,
+      backgroundColor: category.backgroundColor,
     },
-    resolver: zodResolver(updateProductSchema),
+    resolver: zodResolver(updateCategorySchema),
   });
 
-  const { execute, isPending } = useAction(updateProductAction, {
+  const { execute, isPending } = useAction(updateCategoryAction, {
     onSuccess: () => {
       setOpen(false);
       methods.reset();
 
       toast({
-        title: "Produto atualizado com sucesso!",
+        title: "Categoria atualizada com sucesso!",
       });
     },
     onError: ({ error }) => {
@@ -75,7 +80,7 @@ export function UpdateProductDialog({
 
       toast({
         title: "Poxa! Algo deu errado.",
-        description: "Falha ocorreu ao editar o produto, por favor tente novamente.",
+        description: "Falha ocorreu ao editar a categoria, por favor tente novamente.",
         variant: "destructive",
       });
     },
@@ -85,6 +90,8 @@ export function UpdateProductDialog({
     id: values.id,
     name: values.name,
     isArchived: values.isArchived,
+    textColor: values.textColor,
+    backgroundColor: values.backgroundColor,
   });
 
   return (
@@ -98,7 +105,7 @@ export function UpdateProductDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            Editar produto
+            Editar categoria
           </DialogTitle>
           <DialogDescription>
             Make changes to your profile here. Click save when youre done.
@@ -108,14 +115,14 @@ export function UpdateProductDialog({
         <Form {...methods}>
           <form
             onSubmit={methods.handleSubmit(onSubmit)}
-            id="edit-product-form"
+            id="edit-category-form"
             className="space-y-6"
           >
             <Input
-              id="product-name"
+              id="category-name"
               label="Nome"
               name="name"
-              placeholder="Ex.: Caneca, Boné, Camisa..."
+              placeholder="Ex.: Formatura, Terceição, Férias..."
               autoComplete="off"
               control={methods.control}
             />
@@ -149,22 +156,46 @@ export function UpdateProductDialog({
                   </Select>
 
                   <FormDescription className="text-xs">
-                    Arquivar produtos faz com que eles fiquem escondidos de seu catálogo.
-                    É útil quando parou temporariamente de produzir, ou está sem estoque,
-                    desse produto.
+                    Arquivar categorias faz com que eles fiquem escondidos de seu catálogo.
+                    É útil para categorias sazonais como natal, carnaval, dia dos namorados e etc.
+                    <br />
+                    <span className="whitespace-break-spaces font-semibold">
+                      Obs.: Se o item tiver outra categoria ativa,
+                      ele vai continuar sendo exibido.
+                    </span>
                   </FormDescription>
 
                   <FormMessage className="text-xs font-normal" />
                 </FormItem>
               )}
             />
+
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                id="category-text-color"
+                type="color"
+                label="Cor do texto"
+                name="textColor"
+                control={methods.control}
+              />
+
+              <Input
+                id="category-background-color"
+                type="color"
+                label="Cor de fundo"
+                name="backgroundColor"
+                control={methods.control}
+              />
+            </div>
+
+            <CategoryPreview control={methods.control} />
           </form>
         </Form>
 
         <DialogFooter>
           <Button
             id="save-changes"
-            form="edit-product-form"
+            form="edit-category-form"
             type="submit"
             disabled={!methods.formState.isDirty}
             loading={isPending}

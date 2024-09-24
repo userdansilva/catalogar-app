@@ -5,6 +5,7 @@ import {
 } from "@/lib/shadcn/ui/table";
 import { categoryService } from "@/services/categoryService";
 import { Badge } from "@/lib/shadcn/ui/badge";
+import { UpdateCategoryDialog } from "./update-category-dialog";
 
 export async function CategoriesTable() {
   const data = await categoryService.getAll();
@@ -23,7 +24,7 @@ export async function CategoriesTable() {
       <TableHeader>
         <TableRow>
           <TableHead>Id</TableHead>
-          <TableHead>Nome</TableHead>
+          <TableHead>Preview</TableHead>
           <TableHead className="text-center">Status</TableHead>
           <TableHead>Criado em</TableHead>
           <TableHead>Atualizado em</TableHead>
@@ -35,7 +36,15 @@ export async function CategoriesTable() {
         {data.categories.map((category) => (
           <TableRow key={category.id}>
             <TableCell>{category.id}</TableCell>
-            <TableCell>{category.name}</TableCell>
+            <TableCell>
+              <Badge style={{
+                color: category.textColor,
+                backgroundColor: category.backgroundColor,
+              }}
+              >
+                {category.name}
+              </Badge>
+            </TableCell>
             <TableCell align="center">
               <Badge variant={category.isArchived ? "secondary" : "default"}>
                 {category.isArchived ? "Arquivado" : "Ativo"}
@@ -45,7 +54,7 @@ export async function CategoriesTable() {
             <TableCell>{category.updatedAt ? format(category.updatedAt, "dd MMM, yyyy HH:mm", { locale: ptBR }) : "---"}</TableCell>
             <TableCell className="flex justify-center space-x-1 p-2">
               <div className="flex">
-                {/* <UpdateProductDialog product={product} /> */}
+                <UpdateCategoryDialog category={category} />
                 {/* <DeleteProductAlertDialog product={product} /> */}
               </div>
             </TableCell>

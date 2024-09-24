@@ -2,7 +2,10 @@ import { RowDataPacket } from "mysql2";
 import { z } from "zod";
 import { auth } from "@/auth";
 import { executeQuery, getConnection } from "@/utils/executeQuery";
-import { type createCategorySchema } from "@/actions/schema";
+import {
+  type updateCategorySchema,
+  type createCategorySchema,
+} from "@/actions/schema";
 
 type CategoryDTO = {
   id: number;
@@ -91,6 +94,67 @@ async function create(newCategory: z.infer<typeof createCategorySchema>): Promis
   throw new Error("Algo deu errado ao criar categoria");
 }
 
+async function remove(categoryId: number): Promise<void> {
+  const session = await auth();
+  if (!session) throw new Error("Unable to get user session");
+  const userId = +session.user.id;
+
+  const query = "DELETE FROM `categories` WHERE `id` = ? AND `user_id` = ?";
+
+  const connetion = await getConnection();
+
+  try {
+    await connetion.beginTransaction();
+    await connetion.query(query, [categoryId, userId]);
+
+    await connetion.commit();
+  } catch {
+    await connetion.rollback();
+  } finally {
+    connetion.release();
+  }
+}
+
+async function update(updateCategory: z.infer<typeof updateCategorySchema>) {
+  const session = await auth();
+  if (!session) throw new Error("Unable to get user session");
+  const userId = +session.user.id;
+
+  const updateQuery = "UPDATE `categories` SET `name` = ?, `color_text` = ?, `color_bg` = ?, `archived` = ?, `updated_at` = NOW() WHERE `id` = ? AND `user_id` = ?";
+  const getQuery = "SELECT `id`, `name`, `color_bg`, `color_text`, `archived`, `created_at`, `updated_at` FROM `categories` WHERE `id` = ? AND `user_id` = ?";
+
+  const connection = await getConnection();
+
+  try {
+    await connection.beginTransaction();
+    await connection.query(updateQuery, [
+      updateCategory.name,
+      updateCategory.textColor,
+      updateCategory.backgroundColor,
+      updateCategory.isArchived ? "Y" : "N",
+      updateCategory.id,
+      userId,
+    ]);
+
+    const [results] = await connection.query<CategoryDTO[]>(getQuery, [
+      updateCategory.id,
+      userId,
+    ]);
+
+    await connection.commit();
+
+    const category = formatCategory(results[0]);
+
+    return { category };
+  } catch {
+    await connection.rollback();
+  } finally {
+    connection.release();
+  }
+
+  throw new Error("Algo deu errado ao editar categoria");
+}
+
 async function isNameAvaliable(name: string, id?: number) {
   const session = await auth();
   if (!session) throw new Error("Unable to get user session");
@@ -112,5 +176,7 @@ async function isNameAvaliable(name: string, id?: number) {
 export const categoryService = {
   getAll,
   create,
+  update,
+  delete: remove,
   isNameAvaliable,
 };
