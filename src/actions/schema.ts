@@ -43,3 +43,7 @@ export const updateCategorySchema = z.object({
   backgroundColor: category.backgroundColor,
   isArchived: category.isArchived,
 });
+
+export const deleteCategorySchema = z.object({
+  id: category.id,
+});

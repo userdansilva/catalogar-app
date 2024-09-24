@@ -6,6 +6,7 @@ import {
 import { categoryService } from "@/services/categoryService";
 import { Badge } from "@/lib/shadcn/ui/badge";
 import { UpdateCategoryDialog } from "./update-category-dialog";
+import { DeleteCategoryAlertDialog } from "./delete-category-dialog";
 
 export async function CategoriesTable() {
   const data = await categoryService.getAll();
@@ -55,7 +56,7 @@ export async function CategoriesTable() {
             <TableCell className="flex justify-center space-x-1 p-2">
               <div className="flex">
                 <UpdateCategoryDialog category={category} />
-                {/* <DeleteProductAlertDialog product={product} /> */}
+                <DeleteCategoryAlertDialog category={category} />
               </div>
             </TableCell>
           </TableRow>
